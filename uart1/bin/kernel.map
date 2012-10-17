@@ -1,0 +1,166 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+icount              0x4               src/raspi/interrupts.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+ram              0x00000000         0x00001000
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD src/raspi/setup.o
+LOAD src/raspi/vectors.o
+LOAD src/raspi/interrupts.o
+LOAD src/raspi/main.o
+LOAD src/raspi/serial.o
+LOAD src/raspi/timer.o
+
+.text           0x00000000      0x9d4
+ *(.text)
+ .text          0x00000000      0x60c src/raspi/setup.o
+                0x00000000                _init
+                0x000000dc                dummy
+                0x000000e0                enable_irq
+                0x000005f0                supervisor_sp
+                0x000005f0                exc_stack
+ .text          0x0000060c       0x2c src/raspi/vectors.o
+                0x0000060c                PUT32
+                0x00000614                PUT16
+                0x0000061c                PUT8
+                0x00000624                GET32
+                0x0000062c                GETPC
+                0x00000634                BRANCHTO
+ .text          0x00000638       0x70 src/raspi/interrupts.o
+                0x00000638                c_irq_handler
+ .text          0x000006a8      0x138 src/raspi/main.o
+                0x000006a8                not_main
+                0x00000798                delay
+ .text          0x000007e0      0x158 src/raspi/serial.o
+                0x000007e0                serial_init
+ .text          0x00000938       0x9c src/raspi/timer.o
+                0x00000938                timer_init
+                0x000009d4                text_size = SIZEOF (.text)
+
+.rodata         0x000009d4       0x2c
+ .rodata        0x000009d4       0x2c src/raspi/main.o
+
+.glue_7         0x00000a00        0x0
+ .glue_7        0x00000000        0x0 linker stubs
+
+.glue_7t        0x00000a00        0x0
+ .glue_7t       0x00000000        0x0 linker stubs
+
+.vfp11_veneer   0x00000a00        0x0
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+
+.v4_bx          0x00000a00        0x0
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.data           0x00000a00        0x0
+ *(.data)
+ .data          0x00000a00        0x0 src/raspi/setup.o
+ .data          0x00000a00        0x0 src/raspi/vectors.o
+ .data          0x00000a00        0x0 src/raspi/interrupts.o
+ .data          0x00000a00        0x0 src/raspi/main.o
+ .data          0x00000a00        0x0 src/raspi/serial.o
+ .data          0x00000a00        0x0 src/raspi/timer.o
+                0x00000a00                __bss_start__ = .
+
+.bss            0x00000a00        0x4
+ *(.bss)
+ .bss           0x00000a00        0x0 src/raspi/setup.o
+ .bss           0x00000a00        0x0 src/raspi/vectors.o
+ .bss           0x00000a00        0x0 src/raspi/interrupts.o
+ .bss           0x00000a00        0x0 src/raspi/main.o
+ .bss           0x00000a00        0x0 src/raspi/serial.o
+ .bss           0x00000a00        0x0 src/raspi/timer.o
+ COMMON         0x00000a00        0x4 src/raspi/interrupts.o
+                0x00000a00                icount
+                0x00000a04                __bss_end__ = .
+OUTPUT(bin/kernel.elf elf32-littlearm)
+
+.ARM.attributes
+                0x00000000       0x34
+ .ARM.attributes
+                0x00000000       0x28 src/raspi/setup.o
+ .ARM.attributes
+                0x00000028       0x28 src/raspi/vectors.o
+ .ARM.attributes
+                0x00000050       0x38 src/raspi/interrupts.o
+ .ARM.attributes
+                0x00000088       0x38 src/raspi/main.o
+ .ARM.attributes
+                0x000000c0       0x38 src/raspi/serial.o
+ .ARM.attributes
+                0x000000f8       0x38 src/raspi/timer.o
+
+.comment        0x00000000       0x11
+ .comment       0x00000000       0x11 src/raspi/interrupts.o
+                                 0x12 (size before relaxing)
+ .comment       0x00000000       0x12 src/raspi/main.o
+ .comment       0x00000000       0x12 src/raspi/serial.o
+ .comment       0x00000000       0x12 src/raspi/timer.o
+
+.debug_line     0x00000000      0x258
+ .debug_line    0x00000000       0x7e src/raspi/setup.o
+ .debug_line    0x0000007e       0x4b src/raspi/vectors.o
+ .debug_line    0x000000c9       0x5a src/raspi/interrupts.o
+ .debug_line    0x00000123       0x84 src/raspi/main.o
+ .debug_line    0x000001a7       0x6b src/raspi/serial.o
+ .debug_line    0x00000212       0x46 src/raspi/timer.o
+
+.debug_info     0x00000000      0x3a4
+ .debug_info    0x00000000       0x6f src/raspi/setup.o
+ .debug_info    0x0000006f       0x71 src/raspi/vectors.o
+ .debug_info    0x000000e0       0xa5 src/raspi/interrupts.o
+ .debug_info    0x00000185      0x101 src/raspi/main.o
+ .debug_info    0x00000286       0x8e src/raspi/serial.o
+ .debug_info    0x00000314       0x90 src/raspi/timer.o
+
+.debug_abbrev   0x00000000      0x1cc
+ .debug_abbrev  0x00000000       0x14 src/raspi/setup.o
+ .debug_abbrev  0x00000014       0x14 src/raspi/vectors.o
+ .debug_abbrev  0x00000028       0x68 src/raspi/interrupts.o
+ .debug_abbrev  0x00000090       0xa2 src/raspi/main.o
+ .debug_abbrev  0x00000132       0x4c src/raspi/serial.o
+ .debug_abbrev  0x0000017e       0x4e src/raspi/timer.o
+
+.debug_aranges  0x00000000       0xc0
+ .debug_aranges
+                0x00000000       0x20 src/raspi/setup.o
+ .debug_aranges
+                0x00000020       0x20 src/raspi/vectors.o
+ .debug_aranges
+                0x00000040       0x20 src/raspi/interrupts.o
+ .debug_aranges
+                0x00000060       0x20 src/raspi/main.o
+ .debug_aranges
+                0x00000080       0x20 src/raspi/serial.o
+ .debug_aranges
+                0x000000a0       0x20 src/raspi/timer.o
+
+.debug_loc      0x00000000       0xdc
+ .debug_loc     0x00000000       0x2c src/raspi/interrupts.o
+ .debug_loc     0x0000002c       0x58 src/raspi/main.o
+ .debug_loc     0x00000084       0x2c src/raspi/serial.o
+ .debug_loc     0x000000b0       0x2c src/raspi/timer.o
+
+.debug_str      0x00000000      0x138
+ .debug_str     0x00000000       0xcc src/raspi/interrupts.o
+                                 0xe5 (size before relaxing)
+ .debug_str     0x000000cc       0x28 src/raspi/main.o
+                                 0xed (size before relaxing)
+ .debug_str     0x000000f4       0x1f src/raspi/serial.o
+                                 0xd8 (size before relaxing)
+ .debug_str     0x00000113       0x25 src/raspi/timer.o
+                                 0xde (size before relaxing)
+
+.debug_frame    0x00000000       0xc8
+ .debug_frame   0x00000000       0x2c src/raspi/interrupts.o
+ .debug_frame   0x0000002c       0x44 src/raspi/main.o
+ .debug_frame   0x00000070       0x2c src/raspi/serial.o
+ .debug_frame   0x0000009c       0x2c src/raspi/timer.o

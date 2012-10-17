@@ -1,0 +1,110 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+icount              0x4               src/raspi/main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+ram              0x00008000         0x10000000
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD src/raspi/setup.o
+LOAD src/raspi/vectors.o
+LOAD src/raspi/main.o
+
+.text           0x00008000      0xad4
+ *(.text)
+ .text          0x00008000      0x980 src/raspi/setup.o
+                0x00008000                _start
+                0x0000805c                dummy
+                0x00008560                exc_stack
+                0x00008960                supervisor_sp
+ .text          0x00008980       0x2c src/raspi/vectors.o
+                0x00008980                PUT32
+                0x00008988                PUT16
+                0x00008990                PUT8
+                0x00008998                GET32
+                0x000089a0                GETPC
+                0x000089a8                BRANCHTO
+ .text          0x000089ac      0x128 src/raspi/main.o
+                0x000089ac                not_main
+                0x00008a64                c_irq_handler
+
+.glue_7         0x00008ad4        0x0
+ .glue_7        0x00000000        0x0 linker stubs
+
+.glue_7t        0x00008ad4        0x0
+ .glue_7t       0x00000000        0x0 linker stubs
+
+.vfp11_veneer   0x00008ad4        0x0
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+
+.v4_bx          0x00008ad4        0x0
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.data           0x00008ad4        0x0
+ *(.data)
+ .data          0x00008ad4        0x0 src/raspi/setup.o
+ .data          0x00008ad4        0x0 src/raspi/vectors.o
+ .data          0x00008ad4        0x0 src/raspi/main.o
+                0x00008ad4                __bss_start__ = .
+
+.bss            0x00008ad4        0x4
+ *(.bss)
+ .bss           0x00008ad4        0x0 src/raspi/setup.o
+ .bss           0x00008ad4        0x0 src/raspi/vectors.o
+ .bss           0x00008ad4        0x0 src/raspi/main.o
+ COMMON         0x00008ad4        0x4 src/raspi/main.o
+                0x00008ad4                icount
+                0x00008ad8                __bss_end__ = .
+OUTPUT(bin/kernel.elf elf32-littlearm)
+
+.ARM.attributes
+                0x00000000       0x34
+ .ARM.attributes
+                0x00000000       0x28 src/raspi/setup.o
+ .ARM.attributes
+                0x00000028       0x28 src/raspi/vectors.o
+ .ARM.attributes
+                0x00000050       0x38 src/raspi/main.o
+
+.comment        0x00000000       0x11
+ .comment       0x00000000       0x11 src/raspi/main.o
+                                 0x12 (size before relaxing)
+
+.debug_line     0x00000000      0x11f
+ .debug_line    0x00000000       0x61 src/raspi/setup.o
+ .debug_line    0x00000061       0x4b src/raspi/vectors.o
+ .debug_line    0x000000ac       0x73 src/raspi/main.o
+
+.debug_info     0x00000000      0x1ea
+ .debug_info    0x00000000       0x70 src/raspi/setup.o
+ .debug_info    0x00000070       0x72 src/raspi/vectors.o
+ .debug_info    0x000000e2      0x108 src/raspi/main.o
+
+.debug_abbrev   0x00000000       0xd7
+ .debug_abbrev  0x00000000       0x14 src/raspi/setup.o
+ .debug_abbrev  0x00000014       0x14 src/raspi/vectors.o
+ .debug_abbrev  0x00000028       0xaf src/raspi/main.o
+
+.debug_aranges  0x00000000       0x60
+ .debug_aranges
+                0x00000000       0x20 src/raspi/setup.o
+ .debug_aranges
+                0x00000020       0x20 src/raspi/vectors.o
+ .debug_aranges
+                0x00000040       0x20 src/raspi/main.o
+
+.debug_loc      0x00000000       0x58
+ .debug_loc     0x00000000       0x58 src/raspi/main.o
+
+.debug_str      0x00000000       0xd7
+ .debug_str     0x00000000       0xd7 src/raspi/main.o
+                                 0xf0 (size before relaxing)
+
+.debug_frame    0x00000000       0x48
+ .debug_frame   0x00000000       0x48 src/raspi/main.o
