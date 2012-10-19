@@ -1,2 +1,2 @@
 This is a template I found for the Raspi C coding  (https://github.com/MichaelBell/RasPi-bare)
-Copt the bin/kernel.img on to the SD card and see the OK LED blinking  
+Copy the bin/kernel.img on to the SD card and see the OK LED blinking  
