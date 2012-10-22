@@ -25,7 +25,10 @@ MODULES := raspi
 SRC_DIR := $(addprefix src/,$(MODULES))
 INC_DIR := $(addsuffix /include,$(SRC_DIR))
 BUILD_DIR := $(addsuffix /build,$(SRC_DIR))
-INCC_DIR := /Users/ravalbrijen/workspace/raspi/Raspberry-Pi-/newlib-1.18.0/newlib/libc/include
+INNCC_DIR := /Users/ravalbrijen/workspace/raspi/Raspberry-Pi-/newlib-1.18.0/newlib/libc/include
+
+#INCC_DIR := /Users/ravalbrijen/workspace/Tools/yagarto-4.7.1/arm-none-eabi/include
+
 
 ASRC     := $(foreach sdir,$(SRC_DIR),$(wildcard $(sdir)/*.s))
 AOBJ     := $(ASRC:.s=.o)
@@ -50,8 +53,7 @@ bin/kernel.img: bin/kernel.elf
 	${OBJCOPY} -O binary $< $@
 
 bin/kernel.elf: raspi.ld $(OBJ) 
-	${LD} ${LDFLAGS}  $(OBJ) -Map bin/kernel.map -o $@ -T raspi.ld /Users/ravalbrijen/Documents/My-Stuff/ARM/yagarto-4.6.2/lib/gcc/arm-none-eabi/4.6.2/libgcc.a /Users/ravalbrijen/workspace/raspi/Raspberry-Pi-/newlib-1.18.0/arm-none-eabi/newlib/libc.a
-
+	${LD} ${LDFLAGS}  $(OBJ) -Map bin/kernel.map -o $@ -T raspi.ld /Users/ravalbrijen/workspace/raspi/Raspberry-Pi-/newlib-1.18.0/arm-none-eabi/newlib/libc.a /Users/ravalbrijen/workspace/Tools/yagarto-4.7.1/lib/gcc/arm-none-eabi/4.7.1/libgcc.a
 clean:
 	rm -f bin/*.elf bin/*.img bin/*.map $(OBJ)
 

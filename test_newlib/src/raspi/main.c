@@ -7,20 +7,22 @@
 #include "stdio.h"
 #include "malloc.h"
 
-__attribute__((no_instrument_function))  void not_main(void)
+__attribute__((no_instrument_function)) int not_main(void)
 {
     
     unsigned int ra;
     serial_init();
-    print_s("Testing UART and Timer INT\n\r");
-    /*
-    print_s("Enter a char ");
-    char c = get_char();
-    print_s("The next char is ");
-    print_ch(c);
-    */
-    int *a = (int*)malloc(10);
-    printf("test\n");
+    printf("\n\rTesting UART and Timer INT\n\r");
+    
+    int size;
+    printf("Enter the size of malloc to be allocated \n\r ");
+    scanf("%d",&size);
+
+    unsigned int *ptr = (unsigned int*)malloc(size);
+    if(ptr == NULL)
+        printf("Malloc allocation failed\n\r");
+    printf("Address of malloc if size %d  allocated 0x%x \n\r", size,ptr); 
+
     PUT32(IRQ_DISABLE_BASIC,1);
     
     /* Selecting the GPIO Pin for OK LED and setting it to ouput */
@@ -33,8 +35,9 @@ __attribute__((no_instrument_function))  void not_main(void)
 
     PUT32(IRQ_ENABLE_BASIC,1);
     enable_irq();
+    printf("See the OK LED blinking\n\r");
     while(1)continue;
-    return;
+    return(0);
 } 
 
 void delay()

@@ -18,4 +18,5 @@ void serial_init();
 void print_s(char *message);
 void print_ch(char ch);
 char get_char();
-
+void hexstring ( unsigned int d );
+void hexstrings ( unsigned int d ); 

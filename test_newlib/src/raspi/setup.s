@@ -102,8 +102,9 @@ enable_irq:
    
    .space 0x100
 
+.ltorg
 temp_stack:
-   .space 1024
+   .space 4096
 
 exc_stack:
 
