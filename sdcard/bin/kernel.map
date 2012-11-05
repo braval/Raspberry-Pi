@@ -1,0 +1,200 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+icount              0x4               src/raspi/interrupts.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+ram              0x0000000000000000 0x0000000001000000
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD src/raspi/setup.o
+LOAD src/raspi/vectors.o
+LOAD src/raspi/interrupts.o
+LOAD src/raspi/main.o
+LOAD src/raspi/sdcard.o
+LOAD src/raspi/serial.o
+LOAD src/raspi/timer.o
+
+.text           0x0000000000000000     0x1060
+ *(.text)
+ .text          0x0000000000000000      0x60c src/raspi/setup.o
+                0x0000000000000000                _init
+                0x00000000000000dc                dummy
+                0x00000000000000e0                enable_irq
+                0x00000000000005f0                supervisor_sp
+                0x00000000000005f0                exc_stack
+ .text          0x000000000000060c       0x2c src/raspi/vectors.o
+                0x000000000000060c                PUT32
+                0x0000000000000614                PUT16
+                0x000000000000061c                PUT8
+                0x0000000000000624                GET32
+                0x000000000000062c                GETPC
+                0x0000000000000634                BRANCHTO
+ .text          0x0000000000000638       0x6c src/raspi/interrupts.o
+                0x0000000000000638                c_irq_handler
+ .text          0x00000000000006a4       0xe4 src/raspi/main.o
+                0x00000000000006a4                not_main
+                0x0000000000000740                delay
+ .text          0x0000000000000788      0x500 src/raspi/sdcard.o
+                0x0000000000000788                wait
+                0x00000000000007d0                sd_init
+ .text          0x0000000000000c88      0x33c src/raspi/serial.o
+                0x0000000000000c88                serial_init
+                0x0000000000000df8                print_s
+                0x0000000000000e48                print_ch
+                0x0000000000000e98                get_char
+                0x0000000000000efc                hexstrings
+                0x0000000000000f94                hexstring
+ .text          0x0000000000000fc4       0x9c src/raspi/timer.o
+                0x0000000000000fc4                timer_init
+                0x0000000000001060                text_size = SIZEOF (.text)
+
+.rodata         0x0000000000001060       0xa0
+ .rodata        0x0000000000001060       0x24 src/raspi/main.o
+ .rodata        0x0000000000001084       0x7c src/raspi/sdcard.o
+
+.glue_7         0x0000000000001100        0x0
+ .glue_7        0x0000000000000000        0x0 linker stubs
+
+.glue_7t        0x0000000000001100        0x0
+ .glue_7t       0x0000000000000000        0x0 linker stubs
+
+.vfp11_veneer   0x0000000000001100        0x0
+ .vfp11_veneer  0x0000000000000000        0x0 linker stubs
+
+.v4_bx          0x0000000000001100        0x0
+ .v4_bx         0x0000000000000000        0x0 linker stubs
+
+.iplt           0x0000000000001100        0x0
+ .iplt          0x0000000000000000        0x0 src/raspi/setup.o
+
+.rel.dyn        0x0000000000001100        0x0
+ .rel.iplt      0x0000000000000000        0x0 src/raspi/setup.o
+
+.data           0x0000000000001100        0x4
+ *(.data)
+ .data          0x0000000000001100        0x0 src/raspi/setup.o
+ .data          0x0000000000001100        0x0 src/raspi/vectors.o
+ .data          0x0000000000001100        0x0 src/raspi/interrupts.o
+ .data          0x0000000000001100        0x4 src/raspi/main.o
+                0x0000000000001100                global_val
+ .data          0x0000000000001104        0x0 src/raspi/sdcard.o
+ .data          0x0000000000001104        0x0 src/raspi/serial.o
+ .data          0x0000000000001104        0x0 src/raspi/timer.o
+                0x0000000000001104                __bss_start__ = .
+
+.igot.plt       0x0000000000001104        0x0
+ .igot.plt      0x0000000000000000        0x0 src/raspi/setup.o
+
+.bss            0x0000000000001104        0x4
+ *(.bss)
+ .bss           0x0000000000001104        0x0 src/raspi/setup.o
+ .bss           0x0000000000001104        0x0 src/raspi/vectors.o
+ .bss           0x0000000000001104        0x0 src/raspi/interrupts.o
+ .bss           0x0000000000001104        0x0 src/raspi/main.o
+ .bss           0x0000000000001104        0x0 src/raspi/sdcard.o
+ .bss           0x0000000000001104        0x0 src/raspi/serial.o
+ .bss           0x0000000000001104        0x0 src/raspi/timer.o
+ COMMON         0x0000000000001104        0x4 src/raspi/interrupts.o
+                0x0000000000001104                icount
+                0x0000000000001108                __bss_end__ = .
+OUTPUT(bin/kernel.elf elf32-littlearm)
+
+.ARM.attributes
+                0x0000000000000000       0x36
+ .ARM.attributes
+                0x0000000000000000       0x28 src/raspi/setup.o
+ .ARM.attributes
+                0x0000000000000028       0x28 src/raspi/vectors.o
+ .ARM.attributes
+                0x0000000000000050       0x3a src/raspi/interrupts.o
+ .ARM.attributes
+                0x000000000000008a       0x3a src/raspi/main.o
+ .ARM.attributes
+                0x00000000000000c4       0x3a src/raspi/sdcard.o
+ .ARM.attributes
+                0x00000000000000fe       0x3a src/raspi/serial.o
+ .ARM.attributes
+                0x0000000000000138       0x3a src/raspi/timer.o
+
+.comment        0x0000000000000000       0x11
+ .comment       0x0000000000000000       0x11 src/raspi/interrupts.o
+                                         0x12 (size before relaxing)
+ .comment       0x0000000000000000       0x12 src/raspi/main.o
+ .comment       0x0000000000000000       0x12 src/raspi/sdcard.o
+ .comment       0x0000000000000000       0x12 src/raspi/serial.o
+ .comment       0x0000000000000000       0x12 src/raspi/timer.o
+
+.debug_line     0x0000000000000000      0x3b0
+ .debug_line    0x0000000000000000       0x84 src/raspi/setup.o
+ .debug_line    0x0000000000000084       0x4b src/raspi/vectors.o
+ .debug_line    0x00000000000000cf       0x6c src/raspi/interrupts.o
+ .debug_line    0x000000000000013b       0x88 src/raspi/main.o
+ .debug_line    0x00000000000001c3       0xf8 src/raspi/sdcard.o
+ .debug_line    0x00000000000002bb       0xaf src/raspi/serial.o
+ .debug_line    0x000000000000036a       0x46 src/raspi/timer.o
+
+.debug_info     0x0000000000000000      0x5de
+ .debug_info    0x0000000000000000       0x70 src/raspi/setup.o
+ .debug_info    0x0000000000000070       0x72 src/raspi/vectors.o
+ .debug_info    0x00000000000000e2       0x99 src/raspi/interrupts.o
+ .debug_info    0x000000000000017b      0x107 src/raspi/main.o
+ .debug_info    0x0000000000000282      0x135 src/raspi/sdcard.o
+ .debug_info    0x00000000000003b7      0x196 src/raspi/serial.o
+ .debug_info    0x000000000000054d       0x91 src/raspi/timer.o
+
+.debug_abbrev   0x0000000000000000      0x2da
+ .debug_abbrev  0x0000000000000000       0x14 src/raspi/setup.o
+ .debug_abbrev  0x0000000000000014       0x14 src/raspi/vectors.o
+ .debug_abbrev  0x0000000000000028       0x5a src/raspi/interrupts.o
+ .debug_abbrev  0x0000000000000082       0xac src/raspi/main.o
+ .debug_abbrev  0x000000000000012e       0x8a src/raspi/sdcard.o
+ .debug_abbrev  0x00000000000001b8       0xd1 src/raspi/serial.o
+ .debug_abbrev  0x0000000000000289       0x51 src/raspi/timer.o
+
+.debug_aranges  0x0000000000000000       0xe0
+ .debug_aranges
+                0x0000000000000000       0x20 src/raspi/setup.o
+ .debug_aranges
+                0x0000000000000020       0x20 src/raspi/vectors.o
+ .debug_aranges
+                0x0000000000000040       0x20 src/raspi/interrupts.o
+ .debug_aranges
+                0x0000000000000060       0x20 src/raspi/main.o
+ .debug_aranges
+                0x0000000000000080       0x20 src/raspi/sdcard.o
+ .debug_aranges
+                0x00000000000000a0       0x20 src/raspi/serial.o
+ .debug_aranges
+                0x00000000000000c0       0x20 src/raspi/timer.o
+
+.debug_loc      0x0000000000000000      0x210
+ .debug_loc     0x0000000000000000       0x2c src/raspi/interrupts.o
+ .debug_loc     0x000000000000002c       0x58 src/raspi/main.o
+ .debug_loc     0x0000000000000084       0x58 src/raspi/sdcard.o
+ .debug_loc     0x00000000000000dc      0x108 src/raspi/serial.o
+ .debug_loc     0x00000000000001e4       0x2c src/raspi/timer.o
+
+.debug_str      0x0000000000000000      0x1ab
+ .debug_str     0x0000000000000000       0xcd src/raspi/interrupts.o
+                                         0xe6 (size before relaxing)
+ .debug_str     0x00000000000000cd       0x38 src/raspi/main.o
+                                         0xf9 (size before relaxing)
+ .debug_str     0x0000000000000105       0x2b src/raspi/sdcard.o
+                                         0xe5 (size before relaxing)
+ .debug_str     0x0000000000000130       0x56 src/raspi/serial.o
+                                        0x115 (size before relaxing)
+ .debug_str     0x0000000000000186       0x25 src/raspi/timer.o
+                                         0xdf (size before relaxing)
+
+.debug_frame    0x0000000000000000      0x19c
+ .debug_frame   0x0000000000000000       0x2c src/raspi/interrupts.o
+ .debug_frame   0x000000000000002c       0x44 src/raspi/main.o
+ .debug_frame   0x0000000000000070       0x48 src/raspi/sdcard.o
+ .debug_frame   0x00000000000000b8       0xb8 src/raspi/serial.o
+ .debug_frame   0x0000000000000170       0x2c src/raspi/timer.o

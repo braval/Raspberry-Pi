@@ -1,0 +1,11 @@
+This example sets up the mini uart at 115200 baud rate 8N1 configuration
+Care to be taken that output is 3.3v and not 5v
+Special care to be taken while using the GPIO's as they are directly connected to the ARM core
+This implementation is based on polling and enables both receiving and sending
+Minicom is fairly pretty easy to configure
+NO flow control
+save configuration and restart minicom for settings to take effect
+The datasheet has errors, make sure you look at the errors on the give website
+http://elinux.org/BCM2835_datasheet_errata
+
+Again, thanks to David for making it easy to understand. 
