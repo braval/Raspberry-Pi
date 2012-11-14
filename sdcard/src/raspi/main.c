@@ -19,6 +19,11 @@ __attribute__((no_instrument_function))  void not_main(void)
 
     sd_init();
 
+    sd_block_write(5);
+
+    sd_block_read(5);
+
+
     PUT32(IRQ_DISABLE_BASIC,1);
     /* Selecting the GPIO Pin for OK LED and setting it to ouput */
     ra=GET32(GPFSEL1);
