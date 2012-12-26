@@ -15,7 +15,28 @@
 #define INTERRUPT     0x20300030
 
 
+struct _FILE
+{
+    unsigned int reservedSectorCount;
+    unsigned int sectorPerFAT;
+    unsigned int hiddenSectors;
+    unsigned int totalSectors_F32;
+    unsigned char noFATs;
+    unsigned char sectorPerCluster;
+    unsigned int maxRootEntries;
+    unsigned int file_location;
+    unsigned int root_dir_add;
+    unsigned int file_offset;
+};
+typedef struct _FILE FILE;
+
+
 void sd_init();
-void sd_block_write(unsigned int);
-unsigned int sd_block_read(unsigned int);
+void sd_block_write(unsigned int sector, unsigned char *buffer);
+unsigned char*  sd_block_read(unsigned int sector);
+int list_root_directory();
+FILE* fopen(char *s);
+int fread(FILE *file,unsigned char *buffer, int size);
+int fwrite(FILE *file,unsigned char *buffer, int size);
+int fdelete(FILE *file);
 
