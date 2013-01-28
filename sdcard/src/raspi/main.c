@@ -13,21 +13,24 @@ __attribute__((no_instrument_function))  void not_main(void)
     unsigned int ra;
 
     serial_init();
-    print_s("Testing SD CARD INITIALIZATION\n\r");
+    print_s("\n\rTesting SD CARD INITIALIZATION\n\r");
     sd_init();
 
+
+   // list_root_directory();
     FILE *fd;
     fd = fopen("TORNADO.JPG");
 
+    fwrite(fd,"Yaaayie",10);
     unsigned char *test = (unsigned char*)malloc(sizeof(unsigned char)*6);
-    fread(fd,test,6);
-    for(int i=0;i<6;i++)
+    fread(fd,test,10);
+    print_s("\n\rContents: ");
+    for(int i=0;i<10;i++)
         print_ch(test[i]);
 
 
     free(test);
     free(fd);
-
     return;
 }
 

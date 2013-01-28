@@ -139,10 +139,11 @@ void sd_block_write(unsigned int sector,unsigned char *buffer)
     }
 
     int num_written = 0;
+    int check;
     while(num_written<512)
     {
-        PUT32(DATA,buffer[num_written]);
-        num_written++;
+        PUT32(DATA,buffer[num_written] +(int)(buffer[num_written + 1]<<8) +(int)(buffer[num_written + 2]<<16) + (int)(buffer[num_written+3]<<24));
+        num_written = num_written + 4;
     }
 
     rb = GET32(ARM_TIMER_CNT);
@@ -224,7 +225,7 @@ int list_root_directory()
         print_ch(root_dir[i]);
     print_s("\n\r");
 
-    for(int j=64; j<=192; j+=32 )
+    for(int j=32; j<=256; j+=32 )
     {
         for(int i=0;i<11;i++)
         {
@@ -261,7 +262,7 @@ FILE* fopen(char *file_name)
     unsigned char *root_dir = sd_block_read(file->root_dir_add);
 
     int temp,i;
-    for(int k=32;k<192;k+=32)
+    for(int k=32;k<1024;k+=32)
     {
         temp = k;
         for(i=0;i<5;i++)
@@ -284,10 +285,24 @@ FILE* fopen(char *file_name)
         }
     }
     print_s("\n\r");
-    int lower_cluster,higher_cluster;
-    lower_cluster = root_dir[temp + 0x1A];
+    unsigned int lower_cluster,higher_cluster;
+    lower_cluster = (int)(root_dir[temp + 0x1B]<<8) + root_dir[temp + 0x1A] ;
     higher_cluster = root_dir[temp + 0x14];
+
     file->file_location = file->root_dir_add + ((lower_cluster - 2) * 8);
+    print_s("\n\r");
+
+    /*
+    for(int i=0;i<512;i++)
+    {
+        if(i%16==0)
+        {
+            print_s("\n\r");
+            hexstrings(i);
+        }
+        hexstrings(root_dir[i]);
+    }
+    */
     free(root_dir);
     return file;
 }
@@ -303,5 +318,19 @@ int fread(FILE *file, unsigned char *out, int size)
 
     free(temp_read);
 
+
+}
+
+int fwrite(FILE *file, unsigned char *buffer, int size)
+{
+    unsigned char *root_dir_temp = sd_block_read(file->root_dir_add);
+    root_dir_temp[file->file_offset +0x1C] = size;
+    sd_block_write(file->root_dir_add,root_dir_temp);
+
+    unsigned char *file_data = sd_block_read(file->file_location);
+    for(int i=0;i<size;i++)
+        file_data[i] = buffer[i];
+
+    sd_block_write(file->file_location,file_data);
 
 }
