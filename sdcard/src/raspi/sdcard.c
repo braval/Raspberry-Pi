@@ -121,7 +121,7 @@ void sd_init()
 }
 
 
-#Function to write a block of 512 bytes on the SD card
+//Function to write a block of 512 bytes on the SD card
 void sd_block_write(unsigned int sector,unsigned char *buffer)
 {
 
@@ -161,7 +161,7 @@ void sd_block_write(unsigned int sector,unsigned char *buffer)
 }
 
 
-#Function to read a block of 512 bytes on the SD card
+//Function to read a block of 512 bytes on the SD card
 unsigned char*  sd_block_read(unsigned int sector)
 {
 
