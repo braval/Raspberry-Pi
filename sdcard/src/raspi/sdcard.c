@@ -5,6 +5,8 @@
 #include "define.h"
 #include "timer.h"
 #include "malloc.h"
+
+//Function to provide necessary delay
 void wait()
 {
     unsigned int ra;
@@ -15,6 +17,7 @@ void wait()
 
 
 unsigned char buffer[512];
+//Initializes the SD card
 void sd_init()
 {
     unsigned int m;
@@ -68,7 +71,7 @@ void sd_init()
         wait();
 
 
-        //SD_SEND_OP_COND (repeat until Powerup bit is set) stops here, always 0xff80000 returned
+        //SD_SEND_OP_COND (repeat until Powerup bit is set)
         PUT32(ARG1,0x40FF0000);
         PUT32(CMDTM,0x29020000);
         for(int a =1; a<10; a++)
@@ -82,6 +85,7 @@ void sd_init()
     print_s("\n\rResponse from ACMD41 ");
     hexstrings(GET32(RESP0));
     print_s("\n\rCard Identification number ");
+
     //ALL_SEND_CID
     PUT32(ARG1,0x00000000);
     PUT32(CMDTM,0x02020000);
@@ -117,20 +121,19 @@ void sd_init()
 }
 
 
+#Function to write a block of 512 bytes on the SD card
 void sd_block_write(unsigned int sector,unsigned char *buffer)
 {
 
     unsigned int ra, rb;
-
     PUT32(BLOCKSIZECNT, (1<<16)|512);
-
     PUT32(ARG1,sector);
     PUT32(CMDTM,0x18230000);
-
     PUT32(ARM_TIMER_CTL,0x00F90000);
     PUT32(ARM_TIMER_CTL,0x00F90200);
     rb = GET32(ARM_TIMER_CNT);
 
+    //Delay
     while(1)
     {
         ra = GET32(ARM_TIMER_CNT);
@@ -140,6 +143,7 @@ void sd_block_write(unsigned int sector,unsigned char *buffer)
 
     int num_written = 0;
     int check;
+    //Writing the actual data
     while(num_written<512)
     {
         PUT32(DATA,buffer[num_written] +(int)(buffer[num_written + 1]<<8) +(int)(buffer[num_written + 2]<<16) + (int)(buffer[num_written+3]<<24));
@@ -156,6 +160,8 @@ void sd_block_write(unsigned int sector,unsigned char *buffer)
     }
 }
 
+
+#Function to read a block of 512 bytes on the SD card
 unsigned char*  sd_block_read(unsigned int sector)
 {
 
@@ -175,9 +181,6 @@ unsigned char*  sd_block_read(unsigned int sector)
         if((ra-rb)>=500000)
             break;
     }
-   // unsigned char *buffer = (unsigned char*)malloc(sizeof(unsigned char)*512);
-
-
     int num_read = 0;
     int new_data = 0;
     int temp;
@@ -203,6 +206,8 @@ unsigned char*  sd_block_read(unsigned int sector)
     return buffer;
 }
 
+
+//Function to list the contents of the root directory
 int list_root_directory()
 {
     FILE *file;
@@ -245,11 +250,15 @@ int list_root_directory()
 
 }
 
+
+//Function which opens a file and returns a handle to the file
 FILE* fopen(char *file_name)
 {
     FILE *file = (FILE *)malloc(sizeof(FILE));
     unsigned char *boot_sector_record = sd_block_read(0x2000);
 
+
+    //Population the necessary details for the particular file
     file->reservedSectorCount = (int)(boot_sector_record[0x0F] << 8) + boot_sector_record[0x0E];
     file->sectorPerFAT =  (int)(boot_sector_record[0x27] << 24) +(int)(boot_sector_record[0x26] << 16)+ (int)(boot_sector_record[0x25] <<8) +(int)boot_sector_record[0x24];
     file->hiddenSectors = (int)(boot_sector_record[0x1F] << 24) + (int)(boot_sector_record[0x1E]<<16) + (int) (boot_sector_record[0x1D]<<8) + (int)(boot_sector_record[0x1C]);
@@ -292,21 +301,12 @@ FILE* fopen(char *file_name)
     file->file_location = file->root_dir_add + ((lower_cluster - 2) * 8);
     print_s("\n\r");
 
-    /*
-    for(int i=0;i<512;i++)
-    {
-        if(i%16==0)
-        {
-            print_s("\n\r");
-            hexstrings(i);
-        }
-        hexstrings(root_dir[i]);
-    }
-    */
     free(root_dir);
     return file;
 }
 
+
+//Function to read the contents of the file
 int fread(FILE *file, unsigned char *out, int size)
 {
     unsigned char *temp_read = sd_block_read(file->file_location);
@@ -321,6 +321,7 @@ int fread(FILE *file, unsigned char *out, int size)
 
 }
 
+//Function to write to a file
 int fwrite(FILE *file, unsigned char *buffer, int size)
 {
     unsigned char *root_dir_temp = sd_block_read(file->root_dir_add);

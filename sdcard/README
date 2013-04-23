@@ -8,4 +8,9 @@ save configuration and restart minicom for settings to take effect
 The datasheet has errors, make sure you look at the errors on the give website
 http://elinux.org/BCM2835_datasheet_errata
 
+
+
+This example is my own implementation of FAT32 driver to do basic operations such as read, open, write and close a file.
+For more details, please read the src/raspi/sdcard.c file 
+
 Again, thanks to David for making it easy to understand. 
