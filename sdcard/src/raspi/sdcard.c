@@ -212,8 +212,10 @@ int list_root_directory()
 {
     FILE *file;
     file = (FILE *)malloc(sizeof(FILE));
+    //Reading the BSE(Address to be calculated from reading 1st sector, came out to be 0x2000 in my case)
     unsigned char *boot_sector_record = sd_block_read(0x2000);
 
+    //Populating the important required information
     file->reservedSectorCount = (int)(boot_sector_record[0x0F] << 8) + boot_sector_record[0x0E];
     file->sectorPerFAT =  (int)(boot_sector_record[0x27] << 24) +(int)(boot_sector_record[0x26] << 16)+ (int)(boot_sector_record[0x25] <<8) +(int)boot_sector_record[0x24];
     file->hiddenSectors = (int)(boot_sector_record[0x1F] << 24) + (int)(boot_sector_record[0x1E]<<16) + (int) (boot_sector_record[0x1D]<<8) + (int)(boot_sector_record[0x1C]);
@@ -222,7 +224,9 @@ int list_root_directory()
     file->sectorPerCluster = boot_sector_record[0x0D];
     file->maxRootEntries = (int)(boot_sector_record[0x12] << 8) + boot_sector_record[0x11];
 
+    //Calculating address of the root directory
     unsigned int root_dir_add = file->hiddenSectors + file->reservedSectorCount + (file->noFATs * file->sectorPerFAT );
+    //Reading the root directory
     unsigned char *root_dir = sd_block_read(root_dir_add);
 
     print_s("Volume name : ");
@@ -230,6 +234,7 @@ int list_root_directory()
         print_ch(root_dir[i]);
     print_s("\n\r");
 
+    //Lists the contents of the root directory
     for(int j=32; j<=256; j+=32 )
     {
         for(int i=0;i<11;i++)
@@ -268,8 +273,10 @@ FILE* fopen(char *file_name)
     file->maxRootEntries = (int)(boot_sector_record[0x12] << 8) + boot_sector_record[0x11];
 
     file->root_dir_add = file->hiddenSectors + file->reservedSectorCount + (file->noFATs * file->sectorPerFAT );
+    //Reading the root directory
     unsigned char *root_dir = sd_block_read(file->root_dir_add);
 
+    //Find the file to be Opened
     int temp,i;
     for(int k=32;k<1024;k+=32)
     {
@@ -293,15 +300,18 @@ FILE* fopen(char *file_name)
                 print_ch(root_dir[temp+i]);
         }
     }
+    //Finding the location of the file(higher and lower clusters)
     print_s("\n\r");
     unsigned int lower_cluster,higher_cluster;
     lower_cluster = (int)(root_dir[temp + 0x1B]<<8) + root_dir[temp + 0x1A] ;
     higher_cluster = root_dir[temp + 0x14];
 
+    //Storing the file location
     file->file_location = file->root_dir_add + ((lower_cluster - 2) * 8);
     print_s("\n\r");
 
     free(root_dir);
+    //Returning the file structure(handle in this case)
     return file;
 }
 
@@ -309,6 +319,7 @@ FILE* fopen(char *file_name)
 //Function to read the contents of the file
 int fread(FILE *file, unsigned char *out, int size)
 {
+    //the file handle which is passed as a parameter is used to read the file
     unsigned char *temp_read = sd_block_read(file->file_location);
 
     for(int i=0;i<size;i++)
@@ -324,14 +335,18 @@ int fread(FILE *file, unsigned char *out, int size)
 //Function to write to a file
 int fwrite(FILE *file, unsigned char *buffer, int size)
 {
+    //Reading the root directory
     unsigned char *root_dir_temp = sd_block_read(file->root_dir_add);
+    //modifying the size of the file to the new size
     root_dir_temp[file->file_offset +0x1C] = size;
+    //Writing the new data to the file location
     sd_block_write(file->root_dir_add,root_dir_temp);
 
     unsigned char *file_data = sd_block_read(file->file_location);
     for(int i=0;i<size;i++)
         file_data[i] = buffer[i];
 
+    //Writing the data to the file
     sd_block_write(file->file_location,file_data);
 
 }
